@@ -212,9 +212,9 @@ h1 {
 .stage .dse-loader__stack { transform: scale(0.76); }
 .stage.is-full .dse-loader__stack { transform: none; }
 
-/* The loading screen sits above the cover, exactly as it does on the site, so
-   fading it uncovers the cover and not the homepage. */
-.dse-reveal__loader { z-index: 7; }
+/* The loading screen sits below the cover, exactly as it does on the site:
+   the cover opens onto this, and the site appears only when this lifts. */
+.dse-reveal__loader { z-index: 1; }
 
 .seq {
   display: flex;
@@ -1401,10 +1401,11 @@ footer {
   }
 }
 
-/* The loading screen replayed inside the overlay on launch day. It has to sit
-   above the cover so that fading it out uncovers the cover, not the site. */
+/* The loading screen replayed inside the overlay on launch day. It sits
+   *below* the cover: the cover opens onto this, not onto the site, and the
+   site is uncovered only when this lifts away in turn. */
 .dse-reveal__loader {
-  z-index: 7;
+  z-index: 1;
 }
 </style>
 </head>
@@ -1424,8 +1425,9 @@ footer {
   <section>
     <h2>Opening the site</h2>
     <p class="section-note">
-      The whole sequence a guest sees on the day: the loading screen, then the cover, then one
-      click and the site is there. Seven options for that middle step &mdash; choose one.
+      The whole sequence a guest sees on the day: the cover is waiting, one click opens it onto
+      the loading screen, and the site arrives behind that. Seven options for how the cover
+      opens &mdash; choose one.
     </p>
 
     <div class="stage-block">
@@ -1443,9 +1445,9 @@ footer {
       <div class="cards" id="cards"></div>
 
       <p class="seq" aria-hidden="true">
-        <b id="s1">1 &middot; Loading</b><i>&rarr;</i>
-        <b id="s2">2 &middot; The cover</b><i>&rarr;</i>
-        <b id="s3">3 &middot; Opening</b><i>&rarr;</i>
+        <b id="s1">1 &middot; The cover</b><i>&rarr;</i>
+        <b id="s2">2 &middot; You click</b><i>&rarr;</i>
+        <b id="s3">3 &middot; Loading</b><i>&rarr;</i>
         <b id="s4">4 &middot; The homepage</b>
       </p>
 
@@ -1686,7 +1688,7 @@ footer {
     overlay = null;
   }
 
-  var LOADER_MS = 2200, LOADER_FADE_MS = 780;
+  var LOADER_HOLD_MS = 2000, LOADER_LIFT_MS = 800;
   var seqEls = ["s1", "s2", "s3", "s4"].map(function (id) { return document.getElementById(id); });
   var loadTimers = [];
 
@@ -1702,30 +1704,13 @@ footer {
     overlay.appendChild(buildStage(variant.id));
     overlay.addEventListener("click", open);
 
-    // The loading screen plays above the cover, the same way it does on the
-    // site, so fading it out uncovers the cover rather than the homepage.
-    var loader = buildLoader();
-    loader.classList.add("dse-reveal__loader", "dse-loader--exit-fade");
-    overlay.appendChild(loader);
-    overlay.classList.add("is-loading");
-
     stage.appendChild(overlay);
     stage.classList.remove("is-panning");
-
     loadTimers.forEach(window.clearTimeout);
-    loadTimers = [
-      window.setTimeout(function () { loader.classList.add("dse-loader--leaving"); }, LOADER_MS),
-      window.setTimeout(function () {
-        if (loader.parentNode) loader.parentNode.removeChild(loader);
-        if (overlay) overlay.classList.remove("is-loading");
-        stageState.textContent = "Closed";
-        hint.textContent = "Click the cover to open it.";
-        step(1);
-      }, LOADER_MS + LOADER_FADE_MS)
-    ];
+    loadTimers = [];
 
-    stageState.textContent = "Loading";
-    hint.textContent = "The loading screen, exactly as it runs every day.";
+    stageState.textContent = "Closed";
+    hint.textContent = "Click the cover to open it.";
     step(0);
 
     Array.prototype.forEach.call(cardsEl.children, function (card) {
@@ -1737,20 +1722,37 @@ footer {
 
   function open() {
     if (!overlay || overlay.classList.contains("dse-reveal--opening")) return;
-    // Not until the loading screen has handed over.
-    if (overlay.classList.contains("is-loading")) return;
+
+    // The cover opens onto the loading screen, not onto the site. Mounting it
+    // underneath at the moment of the click means the white ground is already
+    // behind the cover as it parts, and the seal is drawing itself in as the
+    // cover clears.
+    var loader = buildLoader();
+    loader.classList.add("dse-reveal__loader");
+    overlay.insertBefore(loader, overlay.firstChild);
+
     overlay.classList.add("dse-reveal--opening");
     stageState.textContent = "Opening";
-    step(2);
-    timer = window.setTimeout(function () {
-      clearOverlay();
-      stageState.textContent = "The homepage";
-      hint.textContent = "The site, scrolling through. Play it again, or try another opening.";
-      step(3);
-      // Pan down the full-page shot so the homepage is actually shown, not
-      // just the strip that happens to fit the frame.
-      stage.classList.add("is-panning");
-    }, current.ms);
+    step(1);
+
+    var holdUntil = current.ms + LOADER_HOLD_MS;
+    loadTimers = [
+      window.setTimeout(function () {
+        stageState.textContent = "Loading";
+        hint.textContent = "Behind the cover: the loading screen the site uses every day.";
+        step(2);
+      }, current.ms),
+      window.setTimeout(function () { loader.classList.add("dse-loader--leaving"); }, holdUntil),
+      window.setTimeout(function () {
+        clearOverlay();
+        stageState.textContent = "The homepage";
+        hint.textContent = "The site, scrolling through. Play it again, or try another opening.";
+        step(3);
+        // Pan the full-page shot so the homepage is actually shown, not just
+        // the strip that happens to fit the frame.
+        stage.classList.add("is-panning");
+      }, holdUntil + LOADER_LIFT_MS)
+    ];
   }
 
   VARIANTS.forEach(function (v) {
