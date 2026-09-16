@@ -262,46 +262,6 @@ h1 {
 
 .stage.is-full .stage__exit { display: block; }
 
-/* --- variant cards --------------------------------------------------- */
-
-.cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(238px, 1fr));
-  gap: 12px;
-  margin-top: 16px;
-}
-
-.card {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 15px 16px 16px;
-  text-align: left;
-  font: inherit;
-  color: inherit;
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: 3px;
-  cursor: pointer;
-  transition: border-color 140ms ease, box-shadow 140ms ease, transform 140ms ease;
-}
-
-.card:hover { border-color: var(--gold-bright); transform: translateY(-1px); }
-.card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.card.is-active { border-color: var(--gold-bright); box-shadow: inset 0 0 0 1px var(--gold-bright); }
-
-.card__top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
-.card__name { font-size: 16px; font-weight: 600; letter-spacing: -0.01em; }
-
-.card__ms {
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--ink-3);
-  font-variant-numeric: tabular-nums;
-}
-
-.card__desc { margin: 0; font-size: 13.5px; color: var(--ink-2); line-height: 1.5; }
-
 /* --- controls -------------------------------------------------------- */
 
 .controls {
@@ -737,6 +697,7 @@ footer {
   --dse-gold: #c2913b;
   --dse-gold-bright: #e8c27a;
   --dse-green: #0a7a3f;
+  --dse-hold: 0;
 
   position: absolute;
   inset: 0;
@@ -766,6 +727,7 @@ footer {
   padding: 2rem;
   text-align: center;
   pointer-events: none;
+  transform: scale(calc(1 + var(--dse-hold) * 0.035));
 }
 
 .dse-reveal__seal {
@@ -777,7 +739,9 @@ footer {
   padding: 8px;
   box-shadow:
     0 0 0 1px rgba(232, 194, 122, 0.5),
-    0 18px 60px rgba(0, 0, 0, 0.55);
+    0 18px 60px rgba(0, 0, 0, 0.55),
+    0 0 calc(var(--dse-hold) * 80px) calc(var(--dse-hold) * 14px)
+      rgba(232, 194, 122, calc(var(--dse-hold) * 0.6));
   animation: dse-reveal-in 1s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
@@ -808,6 +772,75 @@ footer {
   animation: dse-reveal-rule 900ms 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+.dse-reveal__hold {
+  position: relative;
+  width: min(280px, 58cqw);
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+  overflow: hidden;
+  animation: dse-reveal-in 1s 640ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.dse-reveal__hold-fill {
+  position: absolute;
+  inset: 0;
+  transform-origin: left center;
+  transform: scaleX(var(--dse-hold));
+  background: linear-gradient(90deg, var(--dse-gold) 0%, var(--dse-gold-bright) 100%);
+  box-shadow: 0 0 12px rgba(232, 194, 122, 0.85);
+}
+
+.dse-reveal__hold-fill::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 14px;
+  background: linear-gradient(90deg, transparent, #fff);
+  opacity: calc(var(--dse-hold) * 0.9);
+}
+
+/* The confetti canvas — a sibling of the cover, so it keeps painting over the
+   homepage after the cover has been taken away. */
+.dse-confetti {
+  position: absolute;
+  inset: 0;
+  z-index: 60;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.dse-reveal__sound {
+  position: absolute;
+  left: 1rem;
+  bottom: 1rem;
+  z-index: 55;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.8rem;
+  font: inherit;
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.86);
+  background: rgba(7, 29, 56, 0.66);
+  border: 1px solid rgba(232, 194, 122, 0.32);
+  border-radius: 999px;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition: color 160ms, background 160ms, border-color 160ms;
+}
+
+.dse-reveal__sound:hover {
+  color: #fff;
+  background: rgba(7, 29, 56, 0.85);
+  border-color: rgba(232, 194, 122, 0.75);
+}
+
 .dse-reveal__hint {
   margin: 0;
   font-size: 0.8125rem;
@@ -830,7 +863,7 @@ footer {
 
 /* The stage always clears first so the mechanism behind it is unobstructed. */
 .dse-reveal--opening .dse-reveal__stage {
-  animation: dse-reveal-stage-out 420ms cubic-bezier(0.7, 0, 0.84, 0) forwards;
+  animation: dse-reveal-stage-out 560ms cubic-bezier(0.7, 0, 0.84, 0) forwards;
 }
 
 /* The whole overlay is the click target, but it has to be a real button so it
@@ -906,7 +939,7 @@ footer {
   background:
     repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.05) 0 1px, transparent 1px 13px),
     linear-gradient(180deg, #0e3260 0%, var(--dse-navy) 45%, var(--dse-navy-deep) 100%);
-  transition: transform 1750ms cubic-bezier(0.76, 0, 0.24, 1);
+  transition: transform 3400ms cubic-bezier(0.66, 0, 0.16, 1);
   will-change: transform;
 }
 
@@ -944,12 +977,14 @@ footer {
     var(--dse-gold-bright) 82%,
     transparent
   );
-  opacity: 0;
+  opacity: calc(var(--dse-hold) * 0.95);
+  transform: scaleX(calc(1 + var(--dse-hold) * 2.6));
+  filter: blur(calc(var(--dse-hold) * 1.5px));
   pointer-events: none;
 }
 
 .dse-reveal--opening .dse-curtain__seam {
-  animation: dse-curtain-seam 1200ms 180ms ease-out forwards;
+  animation: dse-curtain-seam 2200ms 200ms ease-out forwards;
 }
 
 /* ==================================================================
@@ -1414,20 +1449,26 @@ footer {
 <div class="wrap">
   <header class="masthead">
     <p class="eyebrow">Dhaka Stock Exchange &middot; launch day</p>
-    <h1>The loading screen, and seven ways to open the site</h1>
+    <h1>The opening, with sound</h1>
     <p class="lede">
-      Everything here is the real thing, running live &mdash; not a video. Pick a variant and it
-      plays over a screenshot of the new homepage, exactly as it will play over the live site on
-      launch day.
+      The curtain is the chosen opening. It now runs at close to half speed, the cover is opened
+      by pressing and holding rather than clicking, the opening bell and the movement are scored,
+      and the confetti goes up as the panels clear. Everything here is the real thing, running
+      live &mdash; not a video &mdash; over a screenshot of the new homepage.
+    </p>
+    <p class="lede" style="margin-top:.75rem">
+      <b>Turn your sound on.</b> Nothing plays until you press the cover, and there is a mute in
+      the corner of the frame.
     </p>
   </header>
 
   <section>
     <h2>Opening the site</h2>
     <p class="section-note">
-      The whole sequence a guest sees on the day: the cover is waiting, one click opens it onto
-      the loading screen, and the site arrives behind that. Seven options for how the cover
-      opens &mdash; choose one.
+      The whole sequence a guest sees on the day: the cover is waiting, a press and hold opens it
+      onto the loading screen, and the site arrives behind that. Hold until the gold bar under the
+      headline fills &mdash; light gathers in the seam and the sound builds as you do. Let go
+      early and it drains back, so nothing opens by accident.
     </p>
 
     <div class="stage-block">
@@ -1442,11 +1483,9 @@ footer {
         <button class="stage__exit" id="exitFull" type="button">Exit full screen</button>
       </div>
 
-      <div class="cards" id="cards"></div>
-
       <p class="seq" aria-hidden="true">
         <b id="s1">1 &middot; The cover</b><i>&rarr;</i>
-        <b id="s2">2 &middot; You click</b><i>&rarr;</i>
+        <b id="s2">2 &middot; Press and hold</b><i>&rarr;</i>
         <b id="s3">3 &middot; Loading</b><i>&rarr;</i>
         <b id="s4">4 &middot; The homepage</b>
       </p>
@@ -1454,7 +1493,7 @@ footer {
       <div class="controls">
         <button class="btn btn--primary" id="replay" type="button">Play the sequence</button>
         <button class="btn" id="goFull" type="button">Play full screen</button>
-        <span class="hint" id="hint">Pick a variant, then click the cover to open it.</span>
+        <span class="hint" id="hint">Press and hold the cover to open it.</span>
       </div>
     </div>
   </section>
@@ -1502,25 +1541,28 @@ footer {
         </dd>
       </div>
       <div>
-        <dt>Rehearsable</dt>
+        <dt>Sound is never forced</dt>
         <dd>
-          Any of the seven can be played on demand before the day, on the real site, without
-          affecting what visitors see.
+          Nothing plays until a guest presses the cover, which is what browsers require before
+          audio may start &mdash; so the site can never make a noise at someone unasked. The mute
+          sits in the corner throughout, and the whole sequence works in silence.
         </dd>
       </div>
       <div>
         <dt>Considerate by default</dt>
         <dd>
           Visitors whose device is set to reduce motion go straight to the site and see none of
-          this. The demos on this page always animate, so everyone can judge them.
+          this &mdash; no animation, no sound, no confetti. The demos on this page always animate,
+          so everyone can judge them.
         </dd>
       </div>
     </dl>
   </section>
 
   <footer>
-    Prepared for Dhaka Stock Exchange Ltd. The launch date, the chosen opening and the wording on
-    screen are all settings &mdash; any of them can change up to the day.
+    Prepared for Dhaka Stock Exchange Ltd. The launch date, the wording on screen, how long the
+    hold takes and how fast the curtain runs are all settings &mdash; any of them can change up to
+    the day.
   </footer>
 </div>
 
@@ -1531,7 +1573,7 @@ footer {
   var LOGO = "dse-logo.png";
 
   var VARIANTS = [
-    { id: "curtain", name: "Curtain", ms: 1800,
+    { id: "curtain", name: "Curtain", ms: 3400,
       desc: "Two weighted panels part from the centre, a gold seam flaring along the split." },
     { id: "ribbon", name: "Ribbon", ms: 1880,
       desc: "The ribbon is cut at the centre, the ends recoil and drop, then the panels draw back." },
@@ -1556,6 +1598,311 @@ footer {
 
   var CANDLES = [0.34, 0.52, 0.28, 0.66, 0.44, 0.72, 0.3, 0.58, 0.38];
 
+  /* --- sound ---------------------------------------------------------
+     Every note is synthesised in the browser — there is no audio file to
+     fetch, decode and hope for at the exact second the cover opens. The
+     context is only ever built inside a press, which is the gesture
+     browsers require before sound may start. */
+
+  var Audio2 = (function () {
+    var ctx = null, master = null, noise = null, hold = null, muted = false;
+
+    function ensure() {
+      if (ctx) return ctx;
+      var C = window.AudioContext || window.webkitAudioContext;
+      if (!C) return null;
+      try {
+        ctx = new C();
+        master = ctx.createGain();
+        master.gain.value = muted ? 0 : 0.32;
+        var comp = ctx.createDynamicsCompressor();
+        comp.threshold.value = -12;
+        comp.ratio.value = 8;
+        master.connect(comp).connect(ctx.destination);
+      } catch (e) { ctx = null; }
+      return ctx;
+    }
+
+    function buffer() {
+      if (noise) return noise;
+      noise = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate);
+      var d = noise.getChannelData(0);
+      for (var i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      return noise;
+    }
+
+    /* A struck bell. The partials are deliberately not whole multiples of
+       the fundamental — that inharmonicity is what stops it sounding like
+       an organ — and the high ones die away first. */
+    var PARTIALS = [[0.5,0.35,4.2],[1,1,3.4],[2,0.5,2.4],[2.76,0.36,1.8],[4.07,0.22,1.2],[5.43,0.14,0.8],[8.21,0.08,0.5]];
+
+    function bell(at, level) {
+      var bus = ctx.createGain();
+      bus.gain.value = 0.34 * level;
+      bus.connect(master);
+      PARTIALS.forEach(function (p) {
+        var osc = ctx.createOscillator(), g = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.value = 262 * p[0];
+        osc.detune.value = (p[0] * 7) % 11;
+        g.gain.setValueAtTime(0.0001, at);
+        g.gain.exponentialRampToValueAtTime(p[1], at + 0.004);
+        g.gain.exponentialRampToValueAtTime(0.0001, at + p[2]);
+        osc.connect(g).connect(bus);
+        osc.start(at);
+        osc.stop(at + p[2] + 0.1);
+      });
+      var strike = ctx.createBufferSource(), sf = ctx.createBiquadFilter(), sg = ctx.createGain();
+      strike.buffer = buffer();
+      sf.type = "bandpass"; sf.frequency.value = 2600; sf.Q.value = 1.2;
+      sg.gain.setValueAtTime(0.28 * level, at);
+      sg.gain.exponentialRampToValueAtTime(0.0001, at + 0.09);
+      strike.connect(sf).connect(sg).connect(bus);
+      strike.start(at); strike.stop(at + 0.12);
+    }
+
+    function whoosh(at, secs) {
+      var src = ctx.createBufferSource(), f = ctx.createBiquadFilter(), g = ctx.createGain();
+      src.buffer = buffer(); src.loop = true;
+      f.type = "bandpass"; f.Q.value = 0.8;
+      f.frequency.setValueAtTime(320, at);
+      f.frequency.exponentialRampToValueAtTime(3200, at + secs * 0.45);
+      f.frequency.exponentialRampToValueAtTime(600, at + secs);
+      g.gain.setValueAtTime(0.0001, at);
+      g.gain.exponentialRampToValueAtTime(0.3, at + 0.14);
+      g.gain.exponentialRampToValueAtTime(0.0001, at + secs);
+      src.connect(f).connect(g).connect(master);
+      src.start(at); src.stop(at + secs + 0.05);
+    }
+
+    function swell(at, secs) {
+      var src = ctx.createBufferSource(), f = ctx.createBiquadFilter(), g = ctx.createGain();
+      src.buffer = buffer(); src.loop = true;
+      f.type = "lowpass";
+      f.frequency.setValueAtTime(140, at);
+      f.frequency.linearRampToValueAtTime(420, at + secs * 0.6);
+      f.frequency.linearRampToValueAtTime(120, at + secs);
+      g.gain.setValueAtTime(0.0001, at);
+      g.gain.linearRampToValueAtTime(0.22, at + secs * 0.5);
+      g.gain.exponentialRampToValueAtTime(0.0001, at + secs);
+      src.connect(f).connect(g).connect(master);
+      src.start(at); src.stop(at + secs + 0.05);
+    }
+
+    function pop(at, level) {
+      var src = ctx.createBufferSource(), f = ctx.createBiquadFilter(), g = ctx.createGain();
+      src.buffer = buffer();
+      f.type = "highpass"; f.frequency.value = 900;
+      g.gain.setValueAtTime(0.4 * level, at);
+      g.gain.exponentialRampToValueAtTime(0.0001, at + 0.12);
+      src.connect(f).connect(g).connect(master);
+      src.start(at); src.stop(at + 0.14);
+      var b = ctx.createOscillator(), bg = ctx.createGain();
+      b.type = "sine";
+      b.frequency.setValueAtTime(880 * level, at);
+      b.frequency.exponentialRampToValueAtTime(220, at + 0.1);
+      bg.gain.setValueAtTime(0.16 * level, at);
+      bg.gain.exponentialRampToValueAtTime(0.0001, at + 0.14);
+      b.connect(bg).connect(master);
+      b.start(at); b.stop(at + 0.16);
+    }
+
+    return {
+      muted: function () { return muted; },
+      setMuted: function (next) {
+        muted = next;
+        if (ctx) {
+          master.gain.cancelScheduledValues(ctx.currentTime);
+          master.gain.setTargetAtTime(muted ? 0 : 0.32, ctx.currentTime, 0.04);
+        }
+      },
+      /* The wind-up under the hold: a drone climbing a fifth, and a
+         heartbeat under it that quickens as the bar fills. */
+      startHold: function (ms) {
+        if (!ensure()) return;
+        if (ctx.state === "suspended") ctx.resume();
+        this.stopHold(false);
+        var now = ctx.currentTime, end = now + ms / 1000;
+        var bus = ctx.createGain();
+        bus.gain.setValueAtTime(0.0001, now);
+        bus.gain.linearRampToValueAtTime(0.5, now + 0.25);
+        bus.gain.linearRampToValueAtTime(0.95, end);
+        bus.connect(master);
+
+        var f = ctx.createBiquadFilter();
+        f.type = "lowpass"; f.Q.value = 6;
+        f.frequency.setValueAtTime(220, now);
+        f.frequency.exponentialRampToValueAtTime(1800, end);
+        var dg = ctx.createGain();
+        dg.gain.value = 0.22;
+        dg.connect(f).connect(bus);
+
+        var oscs = [55, 55.6, 110].map(function (hz, i) {
+          var o = ctx.createOscillator();
+          o.type = i === 2 ? "triangle" : "sawtooth";
+          o.frequency.setValueAtTime(hz, now);
+          o.frequency.exponentialRampToValueAtTime(hz * 1.5, end);
+          o.connect(dg); o.start(now);
+          return o;
+        });
+
+        var beats = [], at = now + 0.12, gap = 0.34;
+        while (at < end) {
+          var t = ctx.createOscillator(), g = ctx.createGain();
+          t.type = "sine";
+          t.frequency.setValueAtTime(96, at);
+          t.frequency.exponentialRampToValueAtTime(44, at + 0.14);
+          g.gain.setValueAtTime(0.0001, at);
+          g.gain.exponentialRampToValueAtTime(0.5, at + 0.012);
+          g.gain.exponentialRampToValueAtTime(0.0001, at + 0.18);
+          t.connect(g).connect(bus);
+          t.start(at); t.stop(at + 0.2);
+          beats.push(t);
+          at += gap;
+          gap = Math.max(0.1, gap * 0.82);
+        }
+        hold = { bus: bus, oscs: oscs, beats: beats };
+      },
+      stopHold: function (sigh) {
+        if (!ctx || !hold) return;
+        var now = ctx.currentTime, h = hold;
+        hold = null;
+        h.bus.gain.cancelScheduledValues(now);
+        h.bus.gain.setValueAtTime(Math.max(0.0001, h.bus.gain.value), now);
+        h.bus.gain.exponentialRampToValueAtTime(0.0001, now + 0.22);
+        h.oscs.forEach(function (o) { o.frequency.cancelScheduledValues(now); o.stop(now + 0.3); });
+        h.beats.forEach(function (b) { try { b.stop(now + 0.02); } catch (e) {} });
+        if (!sigh) return;
+        var o = ctx.createOscillator(), g = ctx.createGain();
+        o.type = "triangle";
+        o.frequency.setValueAtTime(320, now);
+        o.frequency.exponentialRampToValueAtTime(120, now + 0.32);
+        g.gain.setValueAtTime(0.0001, now);
+        g.gain.exponentialRampToValueAtTime(0.18, now + 0.03);
+        g.gain.exponentialRampToValueAtTime(0.0001, now + 0.36);
+        o.connect(g).connect(master);
+        o.start(now); o.stop(now + 0.4);
+      },
+      /* The moment it opens: the bell, struck twice, over a rising whoosh,
+         with a low swell running as long as the panels are moving. */
+      open: function (curtainMs) {
+        if (!ensure()) return;
+        this.stopHold(false);
+        var now = ctx.currentTime;
+        whoosh(now, 1.1);
+        bell(now + 0.02, 1);
+        bell(now + 0.9, 0.55);
+        swell(now + 0.05, curtainMs / 1000);
+      },
+      confetti: function () {
+        if (!ensure()) return;
+        var now = ctx.currentTime;
+        [0, 0.13, 0.27].forEach(function (o, i) { pop(now + o, 1 - i * 0.22); });
+      }
+    };
+  })();
+
+  /* --- confetti -------------------------------------------------------
+     One canvas painted by hand, in the house colours. It is a sibling of
+     the cover rather than a child, so the paper keeps coming down after
+     the cover has been taken away. */
+
+  var CONFETTI_COLOURS = ["#c2913b", "#e8c27a", "#f5e2bd", "#ffffff", "#0c2c53", "#0a7a3f"];
+
+  function playConfetti(host) {
+    var old = host.querySelector(".dse-confetti");
+    if (old) old.parentNode.removeChild(old);
+
+    var canvas = document.createElement("canvas");
+    canvas.className = "dse-confetti";
+    canvas.setAttribute("aria-hidden", "true");
+    host.appendChild(canvas);
+    var ctx2d = canvas.getContext("2d");
+    if (!ctx2d) return;
+
+    var w = 0, h = 0;
+    function resize() {
+      var dpr = Math.min(2, window.devicePixelRatio || 1);
+      w = host.clientWidth; h = host.clientHeight;
+      canvas.width = Math.floor(w * dpr);
+      canvas.height = Math.floor(h * dpr);
+      ctx2d.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    resize();
+    window.addEventListener("resize", resize);
+
+    var pieces = [];
+    function piece(x, y, vx, vy) {
+      var pw = 6 + Math.random() * 7;
+      pieces.push({
+        x: x, y: y, vx: vx, vy: vy, w: pw, h: pw * (0.35 + Math.random() * 0.5),
+        spin: Math.random() * 6.28, spinRate: (Math.random() - 0.5) * 12,
+        flip: Math.random() * 6.28, flipRate: 4 + Math.random() * 7,
+        sway: Math.random() * 6.28, swayRate: 2 + Math.random() * 3,
+        colour: CONFETTI_COLOURS[(Math.random() * CONFETTI_COLOURS.length) | 0]
+      });
+    }
+    function fire(x, y, angle, spread, n) {
+      for (var i = 0; i < n; i++) {
+        var a = angle + (Math.random() - 0.5) * spread;
+        var v = (900 + Math.random() * 850) * Math.min(1, h / 760);
+        piece(x, y, Math.cos(a) * v, Math.sin(a) * v);
+      }
+    }
+    function drizzle(n) {
+      for (var i = 0; i < n; i++) {
+        piece(Math.random() * w, -40 - Math.random() * h * 0.4,
+              (Math.random() - 0.5) * 120, 60 + Math.random() * 120);
+      }
+    }
+
+    var scale = w < 640 ? 0.55 : w < 1100 ? 0.8 : 1;
+    var waves = [
+      [0, function () { fire(-10, h + 10, -Math.PI / 3.1, 0.7, Math.round(110 * scale)); }],
+      [0, function () { fire(w + 10, h + 10, -Math.PI + Math.PI / 3.1, 0.7, Math.round(110 * scale)); }],
+      [520, function () { fire(w * 0.5, h + 10, -Math.PI / 2, 1.5, Math.round(80 * scale)); }],
+      [1150, function () { drizzle(Math.round(90 * scale)); }],
+      [2100, function () { drizzle(Math.round(55 * scale)); }]
+    ];
+    var wave = 0, started = performance.now(), last = started, raf = 0;
+    var gravity = 1500 * Math.min(1, h / 760);
+
+    function draw(now) {
+      var elapsed = now - started, dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      while (wave < waves.length && waves[wave][0] <= elapsed) { waves[wave][1](); wave++; }
+      ctx2d.clearRect(0, 0, w, h);
+      for (var i = pieces.length - 1; i >= 0; i--) {
+        var p = pieces[i];
+        p.vy += gravity * dt;
+        p.vx *= 1 - 0.82 * dt;
+        p.sway += p.swayRate * dt;
+        p.x += (p.vx + Math.sin(p.sway) * 46) * dt;
+        p.y += p.vy * dt;
+        p.spin += p.spinRate * dt;
+        p.flip += p.flipRate * dt;
+        if (p.y - p.h > h && p.vy > 0) { pieces.splice(i, 1); continue; }
+        ctx2d.save();
+        ctx2d.translate(p.x, p.y);
+        ctx2d.rotate(p.spin);
+        /* The flutter: the strip turns edge-on and momentarily vanishes,
+           which is most of what makes paper read as paper. */
+        ctx2d.scale(Math.cos(p.flip), 1);
+        ctx2d.fillStyle = p.colour;
+        ctx2d.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        ctx2d.restore();
+      }
+      if (wave >= waves.length && pieces.length === 0) {
+        window.removeEventListener("resize", resize);
+        if (canvas.parentNode) canvas.parentNode.removeChild(canvas);
+        return;
+      }
+      raf = requestAnimationFrame(draw);
+    }
+    raf = requestAnimationFrame(draw);
+  }
+
+
   function el(tag, cls, attrs) {
     var node = document.createElement(tag);
     if (cls) node.className = cls;
@@ -1575,11 +1922,16 @@ footer {
     var head = el("p", "dse-reveal__headline");
     head.textContent = "A new era begins";
     var hint = el("p", "dse-reveal__hint");
-    hint.textContent = "Tap anywhere to reveal";
+    hint.textContent = "Press and hold to reveal";
+    // Something has to fill while the guest holds, or a finger held down on an
+    // apparently dead page comes off after half a second.
+    var bar = el("div", "dse-reveal__hold");
+    bar.appendChild(el("span", "dse-reveal__hold-fill"));
     s.appendChild(eyebrow);
     s.appendChild(head);
     s.appendChild(el("span", "dse-reveal__rule"));
     s.appendChild(hint);
+    s.appendChild(bar);
     return s;
   }
 
@@ -1674,18 +2026,119 @@ footer {
 
   var stage = document.getElementById("stage");
   var stageState = document.getElementById("stageState");
-  var cardsEl = document.getElementById("cards");
   var hint = document.getElementById("hint");
   var current = VARIANTS[0];
   var overlay = null;
+  var coverHint = null;
   var timer = 0;
+
+  /* The cover is opened by a press and hold, not a click. It makes the
+     moment a small ceremony rather than a click-through, and it means a
+     stray tap can never open the site early on the day. */
+  var HOLD_MS = 2000;
+  var COPY = {
+    idle: "Press and hold to reveal",
+    holding: "Keep holding…",
+    aborted: "Hold a moment longer"
+  };
+
+  var holdValue = 0, holding = false, settled = false;
+  var holdRaf = 0, holdLast = 0, nudgeTimer = 0;
+
+  function setCoverHint(text) {
+    if (coverHint) coverHint.textContent = text;
+  }
+
+  function setHold(value) {
+    holdValue = value;
+    if (overlay) overlay.style.setProperty("--dse-hold", value.toFixed(4));
+  }
+
+  function tickHold(now) {
+    holdRaf = 0;
+    /* A capped delta, so switching tabs mid-hold cannot jump the bar. */
+    var dt = Math.min(64, now - holdLast);
+    holdLast = now;
+    var step = dt / HOLD_MS;
+    setHold(holding ? Math.min(1, holdValue + step) : Math.max(0, holdValue - step * 2.2));
+
+    if (holding && holdValue >= 1) {
+      settled = true;
+      holding = false;
+      setCoverHint(COPY.idle);
+      open();
+      return;
+    }
+    if (!holding && holdValue <= 0) return;
+    holdRaf = requestAnimationFrame(tickHold);
+  }
+
+  function press() {
+    if (settled || holding || !overlay) return;
+    holding = true;
+    window.clearTimeout(nudgeTimer);
+    setCoverHint(COPY.holding);
+    Audio2.startHold(HOLD_MS);
+    holdLast = performance.now();
+    if (!holdRaf) holdRaf = requestAnimationFrame(tickHold);
+    stageState.textContent = "Holding";
+    hint.textContent = "Keep holding until the bar fills.";
+  }
+
+  /* Letting go does not reset to zero — the bar drains back a little
+     faster than it filled, so a slip can be recovered from. */
+  function release() {
+    if (settled || !holding) return;
+    holding = false;
+    holdLast = performance.now();
+    if (!holdRaf) holdRaf = requestAnimationFrame(tickHold);
+    if (holdValue > 0.04) {
+      Audio2.stopHold(true);
+      setCoverHint(COPY.aborted);
+      nudgeTimer = window.setTimeout(function () { setCoverHint(COPY.idle); }, 2200);
+      stageState.textContent = "Closed";
+      hint.textContent = "Let go too early. Press and hold the cover.";
+    } else {
+      Audio2.stopHold(false);
+      setCoverHint(COPY.idle);
+    }
+  }
+
+  function buildSound() {
+    var button = el("button", "dse-reveal__sound", { type: "button" });
+    function paint() {
+      var off = Audio2.muted();
+      button.innerHTML =
+        '<svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true">' +
+        '<path d="M4 9.5h3.2L12 5.4v13.2L7.2 14.5H4z" fill="currentColor" stroke="currentColor"' +
+        ' stroke-width="1.4" stroke-linejoin="round"></path>' +
+        (off
+          ? '<path d="M16 9.5l5 5m0-5l-5 5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path>'
+          : '<path d="M15.8 9.2a4 4 0 0 1 0 5.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path>' +
+            '<path d="M18.4 6.8a7.6 7.6 0 0 1 0 10.4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path>') +
+        "</svg><span>" + (off ? "Sound off" : "Sound on") + "</span>";
+      button.setAttribute("aria-label", off ? "Turn sound on" : "Turn sound off");
+    }
+    button.addEventListener("click", function (e) {
+      e.stopPropagation();
+      Audio2.setMuted(!Audio2.muted());
+      paint();
+    });
+    paint();
+    return button;
+  }
 
   function clearOverlay() {
     window.clearTimeout(timer);
+    window.clearTimeout(nudgeTimer);
     loadTimers.forEach(window.clearTimeout);
     loadTimers = [];
+    if (holdRaf) cancelAnimationFrame(holdRaf);
+    holdRaf = 0;
+    holding = false;
     if (overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
     overlay = null;
+    coverHint = null;
   }
 
   var LOADER_HOLD_MS = 2000, LOADER_LIFT_MS = 800;
@@ -1698,11 +2151,33 @@ footer {
 
   function mount(variant) {
     clearOverlay();
+    var stale = stage.querySelector(".dse-confetti");
+    if (stale) stale.parentNode.removeChild(stale);
+
     current = variant;
+    settled = false;
+    holdValue = 0;
+
     overlay = el("div", "dse-reveal");
     overlay.appendChild(buildMechanism(variant.id));
     overlay.appendChild(buildStage(variant.id));
-    overlay.addEventListener("click", open);
+    overlay.appendChild(buildSound());
+    coverHint = overlay.querySelector(".dse-reveal__hint");
+    setHold(0);
+
+    overlay.addEventListener("pointerdown", function (e) {
+      if (e.target.closest && e.target.closest(".dse-reveal__sound")) return;
+      /* Capture, so sliding a thumb off mid-hold does not cancel it. It is
+         not worth failing the press over: a synthetic or already-released
+         pointer makes this throw, and the hold works without it. */
+      try { overlay.setPointerCapture(e.pointerId); } catch (err) {}
+      press();
+    });
+    overlay.addEventListener("pointerup", release);
+    overlay.addEventListener("pointercancel", release);
+    /* A long press on a touch screen otherwise raises the callout menu
+       right in the middle of the ceremony. */
+    overlay.addEventListener("contextmenu", function (e) { e.preventDefault(); });
 
     stage.appendChild(overlay);
     stage.classList.remove("is-panning");
@@ -1710,21 +2185,17 @@ footer {
     loadTimers = [];
 
     stageState.textContent = "Closed";
-    hint.textContent = "Click the cover to open it.";
+    hint.textContent = "Press and hold the cover to open it.";
     step(0);
-
-    Array.prototype.forEach.call(cardsEl.children, function (card) {
-      var on = card.dataset.id === variant.id;
-      card.classList.toggle("is-active", on);
-      card.setAttribute("aria-pressed", on ? "true" : "false");
-    });
   }
 
   function open() {
     if (!overlay || overlay.classList.contains("dse-reveal--opening")) return;
 
+    Audio2.open(current.ms);
+
     // The cover opens onto the loading screen, not onto the site. Mounting it
-    // underneath at the moment of the click means the white ground is already
+    // underneath at the moment it opens means the white ground is already
     // behind the cover as it parts, and the seal is drawing itself in as the
     // cover clears.
     var loader = buildLoader();
@@ -1733,10 +2204,17 @@ footer {
 
     overlay.classList.add("dse-reveal--opening");
     stageState.textContent = "Opening";
+    hint.textContent = "The panels part, and the loading screen is already behind them.";
     step(1);
 
     var holdUntil = current.ms + LOADER_HOLD_MS;
     loadTimers = [
+      // Late enough that there is a real gap for the paper to come through,
+      // early enough that it is part of the opening and not an afterthought.
+      window.setTimeout(function () {
+        playConfetti(stage);
+        Audio2.confetti();
+      }, current.ms * 0.58),
       window.setTimeout(function () {
         stageState.textContent = "Loading";
         hint.textContent = "Behind the cover: the loading screen the site uses every day.";
@@ -1746,7 +2224,7 @@ footer {
       window.setTimeout(function () {
         clearOverlay();
         stageState.textContent = "The homepage";
-        hint.textContent = "The site, scrolling through. Play it again, or try another opening.";
+        hint.textContent = "The site, scrolling through. Play it again from the top.";
         step(3);
         // Pan the full-page shot so the homepage is actually shown, not just
         // the strip that happens to fit the frame.
@@ -1754,24 +2232,6 @@ footer {
       }, holdUntil + LOADER_LIFT_MS)
     ];
   }
-
-  VARIANTS.forEach(function (v) {
-    var card = el("button", "card", { type: "button", "aria-pressed": "false" });
-    card.dataset.id = v.id;
-    var top = el("div", "card__top");
-    var name = el("span", "card__name");
-    name.textContent = v.name;
-    var ms = el("span", "card__ms");
-    ms.textContent = (v.ms / 1000).toFixed(2) + "s";
-    top.appendChild(name);
-    top.appendChild(ms);
-    var desc = el("p", "card__desc");
-    desc.textContent = v.desc;
-    card.appendChild(top);
-    card.appendChild(desc);
-    card.addEventListener("click", function () { mount(v); });
-    cardsEl.appendChild(card);
-  });
 
   document.getElementById("replay").addEventListener("click", function () { mount(current); });
 
@@ -1793,9 +2253,23 @@ footer {
     exitFull();
   });
 
+  /* Full screen only, where the page behind cannot scroll: the space bar
+     holds the cover the same way a finger does. */
   document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape" && stage.classList.contains("is-full")) exitFull();
+    if (e.key === "Escape" && stage.classList.contains("is-full")) { exitFull(); return; }
+    if (!stage.classList.contains("is-full")) return;
+    if (e.key === " " || e.key === "Enter") {
+      e.preventDefault();
+      if (!e.repeat) press();
+    }
   });
+
+  document.addEventListener("keyup", function (e) {
+    if (e.key === " " || e.key === "Enter") release();
+  });
+
+  /* A hold cannot survive the window going away. */
+  window.addEventListener("blur", release);
 
   /* --- the loading screen ------------------------------------------- */
 
@@ -1873,7 +2347,11 @@ footer {
   document.getElementById("loaderReplay").addEventListener("click", mountLoader);
   document.getElementById("loaderExit").addEventListener("click", playLoaderExit);
 
-  mount(VARIANTS[0]);
+  // The client has chosen the curtain. The others are still here for a
+  // rehearsal: ?variant=iris, ?variant=lift, and so on.
+  var wanted = new URLSearchParams(window.location.search).get("variant");
+  var chosen = VARIANTS.filter(function (v) { return v.id === wanted; })[0] || VARIANTS[0];
+  mount(chosen);
   mountLoader();
 })();
 </script>
