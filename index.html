@@ -212,10 +212,6 @@ h1 {
 .stage .dse-loader__stack { transform: scale(0.76); }
 .stage.is-full .dse-loader__stack { transform: none; }
 
-/* The loading screen sits below the cover, exactly as it does on the site:
-   the cover opens onto this, and the site appears only when this lifts. */
-.dse-reveal__loader { z-index: 1; }
-
 .seq {
   display: flex;
   align-items: center;
@@ -863,7 +859,7 @@ footer {
 
 /* The stage always clears first so the mechanism behind it is unobstructed. */
 .dse-reveal--opening .dse-reveal__stage {
-  animation: dse-reveal-stage-out 560ms cubic-bezier(0.7, 0, 0.84, 0) forwards;
+  animation: dse-reveal-stage-out 680ms cubic-bezier(0.7, 0, 0.84, 0) forwards;
 }
 
 /* The whole overlay is the click target, but it has to be a real button so it
@@ -939,7 +935,7 @@ footer {
   background:
     repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.05) 0 1px, transparent 1px 13px),
     linear-gradient(180deg, #0e3260 0%, var(--dse-navy) 45%, var(--dse-navy-deep) 100%);
-  transition: transform 3400ms cubic-bezier(0.66, 0, 0.16, 1);
+  transition: transform 4600ms cubic-bezier(0.62, 0, 0.18, 1);
   will-change: transform;
 }
 
@@ -984,7 +980,7 @@ footer {
 }
 
 .dse-reveal--opening .dse-curtain__seam {
-  animation: dse-curtain-seam 2200ms 200ms ease-out forwards;
+  animation: dse-curtain-seam 2800ms 220ms ease-out forwards;
 }
 
 /* ==================================================================
@@ -1435,13 +1431,6 @@ footer {
     filter: blur(4px);
   }
 }
-
-/* The loading screen replayed inside the overlay on launch day. It sits
-   *below* the cover: the cover opens onto this, not onto the site, and the
-   site is uncovered only when this lifts away in turn. */
-.dse-reveal__loader {
-  z-index: 1;
-}
 </style>
 </head>
 <body>
@@ -1451,10 +1440,13 @@ footer {
     <p class="eyebrow">Dhaka Stock Exchange &middot; launch day</p>
     <h1>The opening, with sound</h1>
     <p class="lede">
-      The curtain is the chosen opening. It now runs at close to half speed, the cover is opened
-      by pressing and holding rather than clicking, the opening bell and the movement are scored,
-      and the confetti goes up as the panels clear. Everything here is the real thing, running
-      live &mdash; not a video &mdash; over a screenshot of the new homepage.
+      The curtain is the chosen opening. It now takes 4.6 seconds instead of 1.8, the cover is
+      opened by pressing and holding rather than clicking, and the panels part straight onto the
+      homepage &mdash; no loading screen in between. The opening is scored: timpani and a cymbal
+      crash on the downbeat, a brass fanfare rising into a held chord, and the exchange bell
+      tolling three times over it, all ringing out into a hall. Confetti goes up as the panels
+      clear. Everything here is the real thing, running live &mdash; not a video &mdash; over a
+      screenshot of the new homepage.
     </p>
     <p class="lede" style="margin-top:.75rem">
       <b>Turn your sound on.</b> Nothing plays until you press the cover, and there is a mute in
@@ -1465,10 +1457,10 @@ footer {
   <section>
     <h2>Opening the site</h2>
     <p class="section-note">
-      The whole sequence a guest sees on the day: the cover is waiting, a press and hold opens it
-      onto the loading screen, and the site arrives behind that. Hold until the gold bar under the
-      headline fills &mdash; light gathers in the seam and the sound builds as you do. Let go
-      early and it drains back, so nothing opens by accident.
+      The whole sequence a guest sees on the day: the cover is waiting, a press and hold opens it,
+      and the homepage is there behind it. Hold until the gold bar under the headline fills
+      &mdash; light gathers in the seam and the music builds as you do. Let go early and it drains
+      back, so nothing opens by accident.
     </p>
 
     <div class="stage-block">
@@ -1486,8 +1478,7 @@ footer {
       <p class="seq" aria-hidden="true">
         <b id="s1">1 &middot; The cover</b><i>&rarr;</i>
         <b id="s2">2 &middot; Press and hold</b><i>&rarr;</i>
-        <b id="s3">3 &middot; Loading</b><i>&rarr;</i>
-        <b id="s4">4 &middot; The homepage</b>
+        <b id="s3">3 &middot; The homepage</b>
       </p>
 
       <div class="controls">
@@ -1501,9 +1492,10 @@ footer {
   <section>
     <h2>The loading screen</h2>
     <p class="section-note">
-      Separate from the launch moment &mdash; this is what shows while a page loads, every day. The
-      seal draws itself in like a stamp being struck, then the whole white sheet lifts away to
-      uncover the page.
+      Not part of the launch moment any more &mdash; the curtain opens straight onto the site. This
+      is the everyday loading screen, shown while a page loads on any ordinary visit. The seal
+      draws itself in like a stamp being struck, then the whole white sheet lifts away to uncover
+      the page.
     </p>
     <div class="stage-block">
       <div class="stage-bar">
@@ -1536,8 +1528,9 @@ footer {
       <div>
         <dt>Nothing to break</dt>
         <dd>
-          The site is already loaded underneath &mdash; the animation is only a cover being taken
-          away. It cannot show a blank page, and anyone can skip straight through it.
+          The site is already loaded and painted underneath &mdash; the animation is only a cover
+          being taken away, which is why it can open straight onto the homepage with nothing to
+          wait for. It cannot show a blank page, and anyone can skip straight through it.
         </dd>
       </div>
       <div>
@@ -1573,7 +1566,7 @@ footer {
   var LOGO = "dse-logo.png";
 
   var VARIANTS = [
-    { id: "curtain", name: "Curtain", ms: 3400,
+    { id: "curtain", name: "Curtain", ms: 4600,
       desc: "Two weighted panels part from the centre, a gold seam flaring along the split." },
     { id: "ribbon", name: "Ribbon", ms: 1880,
       desc: "The ribbon is cut at the centre, the ends recoil and drop, then the panels draw back." },
@@ -1600,12 +1593,18 @@ footer {
 
   /* --- sound ---------------------------------------------------------
      Every note is synthesised in the browser — there is no audio file to
-     fetch, decode and hope for at the exact second the cover opens. The
-     context is only ever built inside a press, which is the gesture
-     browsers require before sound may start. */
+     fetch, decode and hope for at the exact second the cover opens. What
+     makes it sound large rather than loud is the hall: everything is fed
+     through a convolver on a synthesised impulse response, so the bell
+     and the brass ring out into a room instead of stopping at the
+     speaker. The context is only ever built inside a press, which is the
+     gesture browsers require before sound may start. */
 
   var Audio2 = (function () {
-    var ctx = null, master = null, noise = null, hold = null, muted = false;
+    var ctx = null, master = null, hall = null, noise = null, hold = null, muted = false;
+
+    /* C major, the fanfare's home key. */
+    var C2 = 65.41, C3 = 130.81, G3 = 196.00, C4 = 261.63, E4 = 329.63, G4 = 392.00, C5 = 523.25;
 
     function ensure() {
       if (ctx) return ctx;
@@ -1614,13 +1613,30 @@ footer {
       try {
         ctx = new C();
         master = ctx.createGain();
-        master.gain.value = muted ? 0 : 0.32;
+        master.gain.value = muted ? 0 : 0.34;
         var comp = ctx.createDynamicsCompressor();
-        comp.threshold.value = -12;
-        comp.ratio.value = 8;
+        comp.threshold.value = -16;
+        comp.ratio.value = 6;
         master.connect(comp).connect(ctx.destination);
+
+        hall = ctx.createGain();
+        hall.gain.value = 0.5;
+        var conv = ctx.createConvolver();
+        conv.buffer = impulse(3.2, 2.2);
+        hall.connect(conv).connect(master);
       } catch (e) { ctx = null; }
       return ctx;
+    }
+
+    /* A synthesised room: noise shaped by an exponential decay. */
+    function impulse(secs, decay) {
+      var len = Math.floor(ctx.sampleRate * secs);
+      var buf = ctx.createBuffer(2, len, ctx.sampleRate);
+      for (var ch = 0; ch < 2; ch++) {
+        var d = buf.getChannelData(ch);
+        for (var i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, decay);
+      }
+      return buf;
     }
 
     function buffer() {
@@ -1631,6 +1647,15 @@ footer {
       return noise;
     }
 
+    /* Put a voice in the room: dry to the master, and a proportion of it
+       into the hall. The bell is nearly all room; the pops sit forward. */
+    function place(node, wet) {
+      node.connect(master);
+      var send = ctx.createGain();
+      send.gain.value = wet;
+      node.connect(send).connect(hall);
+    }
+
     /* A struck bell. The partials are deliberately not whole multiples of
        the fundamental — that inharmonicity is what stops it sounding like
        an organ — and the high ones die away first. */
@@ -1638,8 +1663,8 @@ footer {
 
     function bell(at, level) {
       var bus = ctx.createGain();
-      bus.gain.value = 0.34 * level;
-      bus.connect(master);
+      bus.gain.value = 0.3 * level;
+      place(bus, 0.85);
       PARTIALS.forEach(function (p) {
         var osc = ctx.createOscillator(), g = ctx.createGain();
         osc.type = "sine";
@@ -1655,10 +1680,101 @@ footer {
       var strike = ctx.createBufferSource(), sf = ctx.createBiquadFilter(), sg = ctx.createGain();
       strike.buffer = buffer();
       sf.type = "bandpass"; sf.frequency.value = 2600; sf.Q.value = 1.2;
-      sg.gain.setValueAtTime(0.28 * level, at);
+      sg.gain.setValueAtTime(0.26 * level, at);
       sg.gain.exponentialRampToValueAtTime(0.0001, at + 0.09);
       strike.connect(sf).connect(sg).connect(bus);
       strike.start(at); strike.stop(at + 0.12);
+    }
+
+    /* Brass. A sawtooth is most of the way there; what sells it is the
+       filter opening a fraction after the note starts — the blat of air
+       arriving before the tone settles. */
+    function brass(at, freq, secs, level) {
+      var bus = ctx.createGain();
+      bus.gain.setValueAtTime(0.0001, at);
+      bus.gain.exponentialRampToValueAtTime(0.12 * level, at + 0.045);
+      bus.gain.setValueAtTime(0.12 * level, at + secs * 0.6);
+      bus.gain.exponentialRampToValueAtTime(0.0001, at + secs);
+      place(bus, 0.7);
+
+      var f = ctx.createBiquadFilter();
+      f.type = "lowpass"; f.Q.value = 2;
+      f.frequency.setValueAtTime(freq * 1.4, at);
+      f.frequency.exponentialRampToValueAtTime(freq * 7, at + 0.09);
+      f.frequency.exponentialRampToValueAtTime(freq * 3, at + secs);
+      f.connect(bus);
+
+      /* One oscillator sounds like a synth; two sound like players. */
+      [-6, 7].forEach(function (cents) {
+        var o = ctx.createOscillator();
+        o.type = "sawtooth";
+        o.frequency.value = freq;
+        o.detune.value = cents;
+        o.connect(f);
+        o.start(at); o.stop(at + secs + 0.1);
+      });
+    }
+
+    /* The low chord holding under the whole opening. */
+    function pad(at, secs, freqs) {
+      var bus = ctx.createGain();
+      bus.gain.setValueAtTime(0.0001, at);
+      bus.gain.linearRampToValueAtTime(0.16, at + secs * 0.35);
+      bus.gain.setValueAtTime(0.16, at + secs * 0.75);
+      bus.gain.exponentialRampToValueAtTime(0.0001, at + secs + 0.6);
+      place(bus, 0.6);
+      freqs.forEach(function (freq) {
+        [-5, 6].forEach(function (cents) {
+          var o = ctx.createOscillator();
+          o.type = "triangle";
+          o.frequency.value = freq;
+          o.detune.value = cents;
+          o.connect(bus);
+          o.start(at); o.stop(at + secs + 0.7);
+        });
+      });
+    }
+
+    /* A timpani hit: a low sine dropping in pitch, skin noise over it. */
+    function timpani(at, level, freq) {
+      var bus = ctx.createGain();
+      bus.gain.value = 0.5 * level;
+      place(bus, 0.7);
+
+      var o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = "sine";
+      o.frequency.setValueAtTime(freq * 1.6, at);
+      o.frequency.exponentialRampToValueAtTime(freq * 0.72, at + 0.28);
+      g.gain.setValueAtTime(0.0001, at);
+      g.gain.exponentialRampToValueAtTime(0.85, at + 0.008);
+      g.gain.exponentialRampToValueAtTime(0.0001, at + 0.9);
+      o.connect(g).connect(bus);
+      o.start(at); o.stop(at + 1);
+
+      var skin = ctx.createBufferSource(), f = ctx.createBiquadFilter(), sg = ctx.createGain();
+      skin.buffer = buffer();
+      f.type = "lowpass"; f.frequency.value = 420;
+      sg.gain.setValueAtTime(0.4, at);
+      sg.gain.exponentialRampToValueAtTime(0.0001, at + 0.16);
+      skin.connect(f).connect(sg).connect(bus);
+      skin.start(at); skin.stop(at + 0.2);
+    }
+
+    /* A cymbal crash: bright noise with a long, slow tail. */
+    function crash(at, level) {
+      var src = ctx.createBufferSource(), hp = ctx.createBiquadFilter(),
+          pk = ctx.createBiquadFilter(), g = ctx.createGain();
+      src.buffer = buffer(); src.loop = true;
+      hp.type = "highpass";
+      hp.frequency.setValueAtTime(2600, at);
+      hp.frequency.exponentialRampToValueAtTime(5200, at + 2.4);
+      pk.type = "peaking"; pk.frequency.value = 7200; pk.gain.value = 5;
+      g.gain.setValueAtTime(0.0001, at);
+      g.gain.exponentialRampToValueAtTime(0.3 * level, at + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, at + 2.6);
+      src.connect(hp).connect(pk).connect(g);
+      place(g, 0.8);
+      src.start(at); src.stop(at + 2.7);
     }
 
     function whoosh(at, secs) {
@@ -1669,9 +1785,10 @@ footer {
       f.frequency.exponentialRampToValueAtTime(3200, at + secs * 0.45);
       f.frequency.exponentialRampToValueAtTime(600, at + secs);
       g.gain.setValueAtTime(0.0001, at);
-      g.gain.exponentialRampToValueAtTime(0.3, at + 0.14);
+      g.gain.exponentialRampToValueAtTime(0.26, at + 0.14);
       g.gain.exponentialRampToValueAtTime(0.0001, at + secs);
-      src.connect(f).connect(g).connect(master);
+      src.connect(f).connect(g);
+      place(g, 0.5);
       src.start(at); src.stop(at + secs + 0.05);
     }
 
@@ -1683,9 +1800,10 @@ footer {
       f.frequency.linearRampToValueAtTime(420, at + secs * 0.6);
       f.frequency.linearRampToValueAtTime(120, at + secs);
       g.gain.setValueAtTime(0.0001, at);
-      g.gain.linearRampToValueAtTime(0.22, at + secs * 0.5);
+      g.gain.linearRampToValueAtTime(0.2, at + secs * 0.5);
       g.gain.exponentialRampToValueAtTime(0.0001, at + secs);
-      src.connect(f).connect(g).connect(master);
+      src.connect(f).connect(g);
+      place(g, 0.35);
       src.start(at); src.stop(at + secs + 0.05);
     }
 
@@ -1693,17 +1811,20 @@ footer {
       var src = ctx.createBufferSource(), f = ctx.createBiquadFilter(), g = ctx.createGain();
       src.buffer = buffer();
       f.type = "highpass"; f.frequency.value = 900;
-      g.gain.setValueAtTime(0.4 * level, at);
+      g.gain.setValueAtTime(0.38 * level, at);
       g.gain.exponentialRampToValueAtTime(0.0001, at + 0.12);
-      src.connect(f).connect(g).connect(master);
+      src.connect(f).connect(g);
+      place(g, 0.5);
       src.start(at); src.stop(at + 0.14);
+
       var b = ctx.createOscillator(), bg = ctx.createGain();
       b.type = "sine";
       b.frequency.setValueAtTime(880 * level, at);
       b.frequency.exponentialRampToValueAtTime(220, at + 0.1);
-      bg.gain.setValueAtTime(0.16 * level, at);
+      bg.gain.setValueAtTime(0.15 * level, at);
       bg.gain.exponentialRampToValueAtTime(0.0001, at + 0.14);
-      b.connect(bg).connect(master);
+      b.connect(bg);
+      place(bg, 0.5);
       b.start(at); b.stop(at + 0.16);
     }
 
@@ -1713,11 +1834,11 @@ footer {
         muted = next;
         if (ctx) {
           master.gain.cancelScheduledValues(ctx.currentTime);
-          master.gain.setTargetAtTime(muted ? 0 : 0.32, ctx.currentTime, 0.04);
+          master.gain.setTargetAtTime(muted ? 0 : 0.34, ctx.currentTime, 0.04);
         }
       },
-      /* The wind-up under the hold: a drone climbing a fifth, and a
-         heartbeat under it that quickens as the bar fills. */
+      /* The wind-up under the hold: a low pedal under strings climbing a
+         fifth, over a timpani roll that quickens as the bar fills. */
       startHold: function (ms) {
         if (!ensure()) return;
         if (ctx.state === "suspended") ctx.resume();
@@ -1726,42 +1847,33 @@ footer {
         var bus = ctx.createGain();
         bus.gain.setValueAtTime(0.0001, now);
         bus.gain.linearRampToValueAtTime(0.5, now + 0.25);
-        bus.gain.linearRampToValueAtTime(0.95, end);
-        bus.connect(master);
+        bus.gain.linearRampToValueAtTime(1, end);
+        place(bus, 0.4);
 
         var f = ctx.createBiquadFilter();
-        f.type = "lowpass"; f.Q.value = 6;
-        f.frequency.setValueAtTime(220, now);
-        f.frequency.exponentialRampToValueAtTime(1800, end);
-        var dg = ctx.createGain();
-        dg.gain.value = 0.22;
-        dg.connect(f).connect(bus);
+        f.type = "lowpass"; f.Q.value = 5;
+        f.frequency.setValueAtTime(240, now);
+        f.frequency.exponentialRampToValueAtTime(2600, end);
+        var strings = ctx.createGain();
+        strings.gain.value = 0.15;
+        strings.connect(f).connect(bus);
 
-        var oscs = [55, 55.6, 110].map(function (hz, i) {
+        var oscs = [C2, C2 * 1.006, C3, G3 * 0.501].map(function (hz, i) {
           var o = ctx.createOscillator();
-          o.type = i === 2 ? "triangle" : "sawtooth";
+          o.type = i === 3 ? "triangle" : "sawtooth";
           o.frequency.setValueAtTime(hz, now);
           o.frequency.exponentialRampToValueAtTime(hz * 1.5, end);
-          o.connect(dg); o.start(now);
+          o.connect(strings); o.start(now);
           return o;
         });
 
-        var beats = [], at = now + 0.12, gap = 0.34;
+        var at = now + 0.12, gap = 0.36;
         while (at < end) {
-          var t = ctx.createOscillator(), g = ctx.createGain();
-          t.type = "sine";
-          t.frequency.setValueAtTime(96, at);
-          t.frequency.exponentialRampToValueAtTime(44, at + 0.14);
-          g.gain.setValueAtTime(0.0001, at);
-          g.gain.exponentialRampToValueAtTime(0.5, at + 0.012);
-          g.gain.exponentialRampToValueAtTime(0.0001, at + 0.18);
-          t.connect(g).connect(bus);
-          t.start(at); t.stop(at + 0.2);
-          beats.push(t);
+          timpani(at, 0.25 + ((at - now) / (end - now)) * 0.5, C2);
           at += gap;
-          gap = Math.max(0.1, gap * 0.82);
+          gap = Math.max(0.09, gap * 0.8);
         }
-        hold = { bus: bus, oscs: oscs, beats: beats };
+        hold = { bus: bus, oscs: oscs };
       },
       stopHold: function (sigh) {
         if (!ctx || !hold) return;
@@ -1771,7 +1883,6 @@ footer {
         h.bus.gain.setValueAtTime(Math.max(0.0001, h.bus.gain.value), now);
         h.bus.gain.exponentialRampToValueAtTime(0.0001, now + 0.22);
         h.oscs.forEach(function (o) { o.frequency.cancelScheduledValues(now); o.stop(now + 0.3); });
-        h.beats.forEach(function (b) { try { b.stop(now + 0.02); } catch (e) {} });
         if (!sigh) return;
         var o = ctx.createOscillator(), g = ctx.createGain();
         o.type = "triangle";
@@ -1780,19 +1891,35 @@ footer {
         g.gain.setValueAtTime(0.0001, now);
         g.gain.exponentialRampToValueAtTime(0.18, now + 0.03);
         g.gain.exponentialRampToValueAtTime(0.0001, now + 0.36);
-        o.connect(g).connect(master);
+        o.connect(g);
+        place(g, 0.3);
         o.start(now); o.stop(now + 0.4);
       },
-      /* The moment it opens: the bell, struck twice, over a rising whoosh,
-         with a low swell running as long as the panels are moving. */
+      /* The moment it opens: timpani and a crash, a four-note fanfare
+         rising into a held major chord, the bell tolling three times over
+         it, and the room moving under the panels as long as they travel. */
       open: function (curtainMs) {
         if (!ensure()) return;
         this.stopHold(false);
-        var now = ctx.currentTime;
-        whoosh(now, 1.1);
-        bell(now + 0.02, 1);
-        bell(now + 0.9, 0.55);
-        swell(now + 0.05, curtainMs / 1000);
+        var now = ctx.currentTime, secs = curtainMs / 1000;
+
+        timpani(now, 1, C2);
+        crash(now, 1);
+        whoosh(now, 1.2);
+
+        [[0, G3, 0.34], [0.17, C4, 0.34], [0.34, E4, 0.34], [0.51, G4, 0.5]]
+          .forEach(function (n) { brass(now + n[0], n[1], n[2], 0.9); });
+
+        var chordFor = Math.max(2.4, secs - 0.9);
+        [C4, E4, G4, C5].forEach(function (f) { brass(now + 0.7, f, chordFor, 0.55); });
+
+        bell(now + 0.04, 1);
+        bell(now + 1.05, 0.68);
+        bell(now + 2.2, 0.42);
+
+        pad(now, secs, [C2, C3, G3]);
+        swell(now + 0.05, secs);
+        timpani(now + 1.6, 0.55, C2);
       },
       confetti: function () {
         if (!ensure()) return;
@@ -2141,8 +2268,7 @@ footer {
     coverHint = null;
   }
 
-  var LOADER_HOLD_MS = 2000, LOADER_LIFT_MS = 800;
-  var seqEls = ["s1", "s2", "s3", "s4"].map(function (id) { return document.getElementById(id); });
+  var seqEls = ["s1", "s2", "s3"].map(function (id) { return document.getElementById(id); });
   var loadTimers = [];
 
   function step(n) {
@@ -2194,20 +2320,14 @@ footer {
 
     Audio2.open(current.ms);
 
-    // The cover opens onto the loading screen, not onto the site. Mounting it
-    // underneath at the moment it opens means the white ground is already
-    // behind the cover as it parts, and the seal is drawing itself in as the
-    // cover clears.
-    var loader = buildLoader();
-    loader.classList.add("dse-reveal__loader");
-    overlay.insertBefore(loader, overlay.firstChild);
-
+    // The panels open onto the homepage itself — no loading screen in
+    // between. The site has been sitting under this cover the whole time,
+    // so there is nothing left to wait for once the cover has travelled.
     overlay.classList.add("dse-reveal--opening");
     stageState.textContent = "Opening";
-    hint.textContent = "The panels part, and the loading screen is already behind them.";
+    hint.textContent = "The panels part, and the homepage is already behind them.";
     step(1);
 
-    var holdUntil = current.ms + LOADER_HOLD_MS;
     loadTimers = [
       // Late enough that there is a real gap for the paper to come through,
       // early enough that it is part of the opening and not an afterthought.
@@ -2216,20 +2336,14 @@ footer {
         Audio2.confetti();
       }, current.ms * 0.58),
       window.setTimeout(function () {
-        stageState.textContent = "Loading";
-        hint.textContent = "Behind the cover: the loading screen the site uses every day.";
-        step(2);
-      }, current.ms),
-      window.setTimeout(function () { loader.classList.add("dse-loader--leaving"); }, holdUntil),
-      window.setTimeout(function () {
         clearOverlay();
         stageState.textContent = "The homepage";
         hint.textContent = "The site, scrolling through. Play it again from the top.";
-        step(3);
+        step(2);
         // Pan the full-page shot so the homepage is actually shown, not just
         // the strip that happens to fit the frame.
         stage.classList.add("is-panning");
-      }, holdUntil + LOADER_LIFT_MS)
+      }, current.ms + 160)
     ];
   }
 
