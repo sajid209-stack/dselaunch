@@ -937,10 +937,10 @@ footer {
     linear-gradient(180deg, #0e3260 0%, var(--dse-navy) 45%, var(--dse-navy-deep) 100%);
   /* Nearly a constant draw, with only the ends softened. A conventional
      ease-in-out over a distance this long spends its middle sprinting: the
-     panels were effectively clear by 3.2s of the 4.6s and the rest of the
-     transition was a sliver creeping off screen. Heavy drapery is pulled at
-     a steady speed, and that is what makes the length actually read. */
-  transition: transform 4600ms cubic-bezier(0.4, 0.06, 0.45, 0.96);
+     panels were 94% clear by 3.2s of the 4.6s and the rest was a sliver
+     creeping off screen. This moves about 14% of the width every 575ms from
+     start to finish, which is how heavy drapery is actually pulled. */
+  transition: transform 4600ms cubic-bezier(0.3, 0.2, 0.7, 0.85);
   will-change: transform;
 }
 
